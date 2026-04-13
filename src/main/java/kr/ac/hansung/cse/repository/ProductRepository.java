@@ -42,7 +42,6 @@ import java.util.Optional;
 @Repository
 public class ProductRepository {
 
-    private final ProductService productService;
     /**
      * @PersistenceContext : Spring이 EntityManager를 주입해 주는 어노테이션입니다.
      *
@@ -54,10 +53,6 @@ public class ProductRepository {
      */
     @PersistenceContext
     private EntityManager entityManager;
-
-    public ProductRepository(ProductService productService) {
-        this.productService = productService;
-    }
 
     /**
      * 모든 상품 목록 조회
