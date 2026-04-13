@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import kr.ac.hansung.cse.model.Product;
+import kr.ac.hansung.cse.service.ProductService;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.Optional;
 @Repository
 public class ProductRepository {
 
+    private final ProductService productService;
     /**
      * @PersistenceContext : Spring이 EntityManager를 주입해 주는 어노테이션입니다.
      *
@@ -52,6 +54,10 @@ public class ProductRepository {
      */
     @PersistenceContext
     private EntityManager entityManager;
+
+    public ProductRepository(ProductService productService) {
+        this.productService = productService;
+    }
 
     /**
      * 모든 상품 목록 조회
@@ -130,5 +136,23 @@ public class ProductRepository {
         if (product != null) {
             entityManager.remove(product);
         }
+    }
+
+    //이름 검색
+    public List<Product> findByNameContaining(String keyword) {
+        return entityManager.createQuery(
+                "SELECT p FROM Product p WHERE p.name LIKE :keyword",
+                Product.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .getResultList();
+    }
+
+    //카테고리 필터
+    public List<Product> findByCategoryId(Long categoryId) {
+        return entityManager.createQuery(
+                "SELECT p FROM Product p WHERE p.category.id = :cid",
+                Product.class)
+                .setParameter("cid", categoryId)
+                .getResultList();
     }
 }
